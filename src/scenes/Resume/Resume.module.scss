@@ -1,23 +1,26 @@
 .content {
-  padding: 8rem 12rem 3rem;
+  padding: 6rem 8rem 3rem; /* Reduced padding */
 }
 
 .header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap; /* Allow wrapping on smaller screens */
 }
 
 .title {
   color: var(--txt);
-  font-size: 4.5rem;
+  font-size: 4rem; /* Adjust font size */
   font-weight: 200;
+  margin-bottom: 1rem; /* Add space below title */
 }
 
 .filesImg {
-  width: 35%;
+  width: 40%;
   min-width: 120px;
   padding: 1rem;
+  margin-bottom: 1rem; /* Add margin for separation */
 
   img {
     width: 100%;
@@ -33,46 +36,68 @@
 .pdfWrapper {
   width: 100%;
   padding: 1rem 0;
+  margin-bottom: 1rem; /* Add space below PDF wrapper */
 }
 
 .downloadText {
   margin-left: 8px;
   text-transform: uppercase;
 }
+
 .filename {
   padding-top: 3px;
   text-transform: uppercase;
   font-size: 12px;
 }
 
-
 @media (max-width: 600px) {
-  .header {
-    padding-bottom: 10px;
+  .content {
+    padding: 4rem 2rem 2rem; /* Adjust padding */
   }
+
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+    padding-bottom: 0;
+  }
+
   .title {
     font-size: 3rem;
+    text-align: center;
+    margin-bottom: 0.5rem; /* Reduced margin */
+  }
+
+  .filesImg {
+    width: 100%;
+    margin-bottom: 1.5rem; /* Add space below image */
   }
 
   .pdfWrapper {
-    width: 100%;
     padding: 2rem 0;
   }
 }
 
 @media (max-width: 925px) {
   .content {
-    padding: 9rem 3rem 1rem;
+    padding: 6rem 2rem 2rem; /* Adjust padding */
   }
+
   .title {
-    font-size: 4rem;
+    font-size: 3.5rem;
+  }
+
+  .header {
+    padding-bottom: 10px;
+    flex-direction: column;
+    align-items: flex-start;
   }
 }
-.loadingIndicator{
+
+.loadingIndicator {
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
-  font-size: 2rem;
+  font-size: 1.5rem; /* Reduced font size */
   color: var(--txt-secondary);
 }

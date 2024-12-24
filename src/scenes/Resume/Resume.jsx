@@ -16,23 +16,41 @@ const Resume = () => {
     setIsLoading(false);
   };
 
+  // Dynamic height for iframe
+  const getIframeHeight = () => {
+    if (window.innerWidth < 600) {
+      return '60vh'; // Less height for small screens
+    }
+    return '80vh'; // Default height for larger screens
+  };
+
+  useEffect(() => {
+    // Recalculate iframe height on window resize
+    const handleResize = () => {
+      if (pdfWrapper.current) {
+        pdfWrapper.current.style.height = getIframeHeight();
+      }
+    };
+
+    handleResize(); // Call initially
+    window.addEventListener('resize', handleResize); // Update on resize
+
+    return () => {
+      window.removeEventListener('resize', handleResize); // Clean up listener
+    };
+  }, []);
+
   return (
     <BaseLayout>
       <div className={s.content}>
         <div className={s.header}>
-          <h1 className={s.title}>
-            My Resume
-          </h1>
+          <h1 className={s.title}>My Resume</h1>
         </div>
 
-        <Button
-          style={{ margin: 'auto', width: '15rem' }}
-          className="primary"
-        >
+        <Button style={{ margin: 'auto', width: '15rem' }} className="primary">
           <a href={resumeLink} download="CV_ZAANOUNI_Ayoub_en.pdf">
             <DownloadIcon fill="#fff" />
-            <span className={s.downloadText}> download resume</span>
-            <span className={s.filename}></span>
+            <span className={s.downloadText}> Download Resume</span>
           </a>
         </Button>
 
@@ -42,13 +60,13 @@ const Resume = () => {
             marginTop: '2rem',
             display: 'flex',
             justifyContent: 'center',
-            height: '130vh',
             width: '100%',
             overflow: 'hidden',
+            height: getIframeHeight(), // Set height dynamically
           }}
         >
           {isLoading && (
-            <div className={s.loadingIndicator} style={{ fontSize: '1.5rem' }}>
+            <div className={s.loadingIndicator}>
               <span>Loading...</span>
             </div>
           )}
@@ -65,19 +83,6 @@ const Resume = () => {
             onLoad={handleIframeLoad}
           />
         </div>
-
-        <br />
-        <br />
-        <Button
-          style={{ margin: 'auto', width: '15rem' }}
-          className="primary"
-        >
-          <a href={resumeLink} download="CV_ZAANOUNI_Ayoub_en.pdf">
-            <DownloadIcon fill="#fff" />
-            <span className={s.downloadText}> download resume</span>
-            <span className={s.filename}></span>
-          </a>
-        </Button>
       </div>
     </BaseLayout>
   );
