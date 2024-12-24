@@ -1,0 +1,151 @@
+.purple {
+  color: var(--txt-secondary);
+}
+
+.card {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  width: 100%;
+  padding: 1.25rem;
+  background-color: transparent;
+  border: 1px solid rgba(0,0,0,.125);
+  border-radius: .25rem;
+  opacity: 0.9;
+  transition: all 0.5s ease 0s;
+  box-shadow: 0 4px 5px 3px var(--card-shadow);
+  color: var(--txt);
+  margin-bottom: 2rem;
+}
+
+.card:hover {
+  transform: scale(1.02);
+  box-shadow: 0 4px 4px 5px var(--card-shadow);
+}
+
+.cardWrapper {
+  display: flex;
+  align-items: flex-start;
+  width: 100%;
+  flex-wrap: wrap;
+  gap: 3rem; 
+}
+
+.logoContainer {
+  flex: 0 0 150px;
+  margin-right: 1rem;
+}
+
+.cardBody {
+  flex: 1;
+  padding: 1.25rem 0;
+}
+
+.title {
+  margin-bottom: .5rem;
+  font-size: 1.25rem;
+  text-align: left;
+}
+
+.company {
+  margin-bottom: .25rem;
+  font-size: 1rem;
+  font-weight: bold;
+  text-align: left;
+}
+
+.dates {
+  margin-bottom: 1rem;
+  font-size: 0.875rem;
+  text-align: left;
+}
+
+.description {
+  text-align: justify;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+
+@media (max-width: 1200px) {
+  .card {
+    width: 100%; 
+  }
+  
+  .logoContainer {
+    flex: 0 0 120px;
+  }
+  
+  .cardBody {
+    padding: 1rem;
+  }
+
+  .title {
+    font-size: 1.1rem;
+  }
+
+  .company {
+    font-size: 0.95rem;
+  }
+
+  .dates {
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .card {
+    width: 100%;
+    flex-direction: column;
+    align-items: center;
+    padding: 1rem;
+  }
+
+  .logoContainer {
+    margin-bottom: 1rem;
+    flex: 0 0 100px; 
+  }
+
+  .cardBody {
+    padding: 1rem;
+  }
+
+  .title {
+    font-size: 1rem;
+  }
+
+  .company {
+    font-size: 0.9rem;
+  }
+
+  .dates {
+    font-size: 0.75rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .card {
+    width: 100%;
+    padding: 0.75rem;
+  }
+
+  .logoContainer {
+    flex: 0 0 80px; 
+  }
+
+  .cardBody {
+    padding: 0.75rem;
+  }
+
+  .title {
+    font-size: 0.9rem;
+  }
+
+  .company {
+    font-size: 0.85rem;
+  }
+
+  .dates {
+    font-size: 0.7rem;
+  }
+}

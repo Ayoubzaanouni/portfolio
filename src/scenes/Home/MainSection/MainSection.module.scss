@@ -1,0 +1,97 @@
+@import '../../../styles/keyframes';
+
+.content {
+  max-width: 1440px;
+  padding: 9rem 4rem;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  color: var(--theme-color);
+  text-align: left;
+  align-self: center;
+}
+
+
+.title {
+  padding-left: .2rem;
+  font-size: 2.4rem;
+}
+.greetingContainer {
+  display: flex;
+  align-items: center;
+  padding-bottom: 15px;
+}
+.handIcon {
+  width: 48px;
+  margin-top: -16px;
+  margin-left: 8px;
+}
+
+.mainTitle {
+  font-size: 2.5rem;
+  word-spacing: .3rem;
+}
+.mainName {
+  color: var(--txt-sec-darcker);
+  text-transform: uppercase;
+}
+
+.spacer {
+  width: 4rem
+}
+
+.homeMainIcon {
+  display: flex !important;
+  width: 37%;
+  min-height: 25rem;
+  margin-top: 2rem;
+  padding: 0 15px;
+
+  & > img {
+    min-width: 230px;
+    height: auto;
+  }
+}
+
+.typewriter div {
+  padding-top: 50px;
+  margin-bottom: 24px;
+  height: 85px
+}
+.typewriterInner {
+  font-size: 2.2em;
+  color: var(--txt-secondary);
+  font-weight: 600;
+}
+.typewriterCursor {
+  font-size: 2.4em;
+  color: var(--txt-secondary);
+}
+
+
+@media (max-width: 925px) {
+  .content {
+    padding: 9rem 3rem 1rem;
+    flex-wrap: wrap;
+    align-self: stretch;
+  }
+  .homeMainIcon {
+    justify-content: center;
+    width: 60%;
+  }
+  .spacer {
+    display: none;
+  }
+}
+
+@media (max-width: 625px) {
+  .header {
+    align-self: center;
+    text-align: center
+  }
+  .greetingContainer {
+    justify-content: center;
+    padding-left: 24px;
+    padding-bottom: 20px;
+  }
+}
