@@ -1,4 +1,4 @@
-import Snap from '../../assets/snap.png';
+import Snap from '../../assets/snap-code.png';
 import BaseLayout from '../../layouts/BaseLayout/BaseLayout';
 import s from './About.module.scss';
 import AboutTextCard from './AboutTextCard/AboutTextCard';
