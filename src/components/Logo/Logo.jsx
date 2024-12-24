@@ -12,7 +12,7 @@ const Logo = ({ className }) => {
             height: '60px',
             paddingTop: '10px',
           }
-        } src="src\components\Logo\Logo.png" alt="logo" className={s.logo} />
+        } src="https://res.cloudinary.com/deiimmbyt/image/upload/v1735083206/logo_eyier3.png" alt="logo" className={s.logo} />
       </Link>
     </div>
   );
