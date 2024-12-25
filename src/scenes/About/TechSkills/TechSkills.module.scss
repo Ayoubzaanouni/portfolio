@@ -21,13 +21,26 @@
   box-shadow: 0 0 0 3px rgba(89, 4, 168, 0.137);
   outline-color: transparent;
   transition: .2s;
-
-  min-width: 100px; 
+  min-width: 100px;
   min-height: 100px;
+}
 
-  &:hover {
-    transform: scale(1.05);
-    border-color: rgba(197, 115, 230, 0.883);
-    box-shadow: 0 0 0 3px rgba(197, 115, 230, 0.883);
+.techIcon:hover {
+  transform: scale(1.05);
+  border-color: rgba(197, 115, 230, 0.883);
+  box-shadow: 0 0 0 3px rgba(197, 115, 230, 0.883);
+}
+
+@media (max-width: 768px) {
+  .techIcon {
+    font-size: 3.5rem; /* Slightly smaller */
+    padding: 3rem 3rem; /* Adjust padding */
+  }
+}
+
+@media (max-width: 480px) {
+  .techIcon {
+    font-size: 3rem; /* Even smaller */
+    padding: 3rem 3rem; /* Adjust padding */
   }
 }
