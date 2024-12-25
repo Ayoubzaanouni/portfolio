@@ -1,4 +1,3 @@
-@import '../../../styles/keyframes';
 
 .content {
   max-width: 1440px;
@@ -54,8 +53,8 @@
 }
 
 .typewriter div {
-  padding-top: 50px;
-  margin-bottom: 24px;
+  padding-top: 30px;
+  margin-bottom: 50px;
   height: 85px
 }
 .typewriterInner {
@@ -76,6 +75,7 @@
     align-self: stretch;
   }
   .homeMainIcon {
+    
     justify-content: center;
     width: 60%;
   }

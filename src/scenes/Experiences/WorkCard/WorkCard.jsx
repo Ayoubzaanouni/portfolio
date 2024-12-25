@@ -18,7 +18,8 @@ const WorkCard = ({ id, companyLogo, jobTitle, company, location, dates, descrip
               effect="blur"
               src={companyLogo}
               width="100%"
-              style={{ height: '150px', objectFit: 'cover' }}
+              height="auto"  // Ensure the image maintains its aspect ratio
+              style={{ objectFit: 'contain' }} // Prevents cropping
             />
           </Link>
         </div>
@@ -35,7 +36,6 @@ const WorkCard = ({ id, companyLogo, jobTitle, company, location, dates, descrip
           </p>
         </div>
       </div>
-      
     </li>
   );
 };

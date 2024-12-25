@@ -44,6 +44,7 @@ const MainSection = () => {
         }
       } className={s.spacer} />
 
+
       <LazyLoadImage
         alt="home-img"
         effect="blur"
