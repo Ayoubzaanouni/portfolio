@@ -2,7 +2,7 @@ import s from './ProjectCard.module.scss';
 import { Link, useLocation } from 'react-router-dom';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 
-const ProjectCard = ({ id, image, title, description }) => {
+const ProjectCard = ({ id, image_url, title, description }) => {
   const location = useLocation();
 
   return (
@@ -15,10 +15,9 @@ const ProjectCard = ({ id, image, title, description }) => {
           <LazyLoadImage
             alt="card-img"
             effect="blur"
-            src={image.src}
+            src={image_url}
             width="100%"
             style={{ minHeight: '10rem' }}
-            placeholderSrc={image.placeholderSrc}
           />
         </Link>
 

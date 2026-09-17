@@ -2,12 +2,13 @@ import { useEffect, useRef, useState } from 'react';
 import DownloadIcon from '../../assets/download.svg?react';
 import Button from '../../components/UIElements/Button/Button';
 import BaseLayout from '../../layouts/BaseLayout/BaseLayout';
+import { getProfile } from '../../api/content';
+import { useAsync } from '../../hooks/useAsync';
 import s from './Resume.module.scss';
 
-const resumeLink =
-  'https://raw.githubusercontent.com/Ayoubzaanouni/Me/main/CV_ZAANOUNI_Ayoub_en.pdf';
-
 const Resume = () => {
+  const { data: profile } = useAsync(getProfile);
+  const resumeLink = profile?.resume_url;
   const [isLoading, setIsLoading] = useState(true);
   const pdfWrapper = useRef(null);
 
@@ -48,7 +49,12 @@ const Resume = () => {
         </div>
 
         <Button style={{ margin: 'auto', width: '15rem' }} className="primary">
-          <a href={resumeLink} download="CV_ZAANOUNI_Ayoub_en.pdf">
+          <a
+            href={resumeLink}
+            download={profile?.resume_filename || 'resume.pdf'}
+            target="_blank"
+            rel="noreferrer"
+          >
             <DownloadIcon fill="#fff" />
             <span className={s.downloadText}> Download Resume</span>
           </a>
@@ -71,8 +77,9 @@ const Resume = () => {
             </div>
           )}
 
+          {resumeLink && (
           <iframe
-            src={`https://mozilla.github.io/pdf.js/web/viewer.html?file=${resumeLink}`}
+            src={`https://mozilla.github.io/pdf.js/web/viewer.html?file=${encodeURIComponent(resumeLink)}`}
             width="80%"
             height="100%"
             title="CV"
@@ -82,6 +89,7 @@ const Resume = () => {
             }}
             onLoad={handleIframeLoad}
           />
+          )}
         </div>
       </div>
     </BaseLayout>

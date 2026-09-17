@@ -1,11 +1,15 @@
 import Snap from '../../assets/snap-code.png';
 import BaseLayout from '../../layouts/BaseLayout/BaseLayout';
+import { getProfile } from '../../api/content';
+import { useAsync } from '../../hooks/useAsync';
 import s from './About.module.scss';
 import AboutTextCard from './AboutTextCard/AboutTextCard';
 import GithubActivity from './GithubActivity/GithubActivity';
 import TechSkills from './TechSkills/TechSkills';
 import ToolsUsed from './ToolsUsed/ToolsUsed';
 const About = () => {
+  const { data: profile } = useAsync(getProfile);
+
   return (
     <BaseLayout>
       <div className={s.content}>
@@ -14,7 +18,7 @@ const About = () => {
             <h1 className={s.title}>
               Learn More <b className={s.purple}>About Me</b>
             </h1>
-            <AboutTextCard />
+            <AboutTextCard profile={profile} />
           </div>
 
           <div className={s.aboutImg}>
@@ -33,7 +37,7 @@ const About = () => {
 
       <ToolsUsed />
 
-        <a href='https://github.com/Ayoubzaanouni'>
+        <a href={profile?.github_url}>
           <h2 className={s.githubActivity}>
             My <b className={s.purple}>Coding</b> Journey
           </h2>
