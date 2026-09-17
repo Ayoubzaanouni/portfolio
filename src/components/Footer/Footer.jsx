@@ -1,8 +1,12 @@
 import { AiFillGithub } from '@react-icons/all-files/ai/AiFillGithub';
 import { FaLinkedinIn } from '@react-icons/all-files/fa/FaLinkedinIn';
+import { getProfile } from '../../api/content';
+import { useAsync } from '../../hooks/useAsync';
 import s from './Footer.module.scss';
 
 const Footer = () => {
+  const { data: profile } = useAsync(getProfile);
+
   // let date = new Date();
   // let year = date.getFullYear();
 
@@ -17,7 +21,7 @@ const Footer = () => {
           <ul className={s.socialIcons}>
           <li>
               <a
-                href="https://www.linkedin.com/in/zaanouni-ayoub/"
+                href={profile?.linkedin_url}
                 target="_blank"
                 rel="noreferrer"
                 aria-label="linkedin"
@@ -27,7 +31,7 @@ const Footer = () => {
             </li>
             <li>
               <a
-                href="https://github.com/Ayoubzaanouni"
+                href={profile?.github_url}
                 target="_blank"
                 rel="noreferrer"
                 aria-label="github"

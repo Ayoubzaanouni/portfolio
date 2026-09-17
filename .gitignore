@@ -24,3 +24,6 @@ yarn-debug.log*
 yarn-error.log*
 
 .idea
+# env and vercel
+.env
+.vercel

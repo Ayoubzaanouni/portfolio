@@ -4,9 +4,14 @@ import { LazyLoadImage } from 'react-lazy-load-image-component';
 import ContactMe from './ContactMe';
 import Tilt from 'react-parallax-tilt';
 import avatar from '../../../assets/me.png';
+import { getProfile } from '../../../api/content';
+import { useAsync } from '../../../hooks/useAsync';
+import { RichText } from '../../../utils/richText';
 import s from './IntroSection.module.scss';
 
 const IntroSection = () => {
+  const { data: profile } = useAsync(getProfile);
+
   return (
     <section className={s.content}>
       <div className={s.introduction}>
@@ -16,33 +21,25 @@ const IntroSection = () => {
               Welcome to My <span className={s.purple}>Portfolio</span>
             </h1>
             <div className={s.description}>
-              <p>
-                I'm a passionate <b>software developer</b> specializing in <br />
-                information systems development.
-              </p>
-              <p>
-                My journey began with{' '}
-                <i>
-                  <b className={s.purple}>CS50x</b>
-                </i>
-                , a course offered by Harvard University.
-                <br />
-                which inspired me to pursue a degree in IT at ISET
-                <br />
-                Currently, I'm furthering my knowledge through a master's degree at ISIMA in France.
-              </p>
-              <p>
-                My field of interest is building
-                <i>
-                  <b className={s.purple}> systems </b>
-                </i>
-                to tackle real world challenges.
-              </p>
+              {profile?.intro_paragraphs.map((text, i) => (
+                <p key={i}>
+                  <RichText
+                    text={text}
+                    highlightClassName={s.purple}
+                  />
+                </p>
+              ))}
             </div>
           </div>
           <div className={s.avatarContainer}>
             <Tilt>
-              <LazyLoadImage alt="avatar" effect="blur" src={avatar} />
+              {profile && (
+                <LazyLoadImage
+                  alt="avatar"
+                  effect="blur"
+                  src={profile.avatar_url || avatar}
+                />
+              )}
             </Tilt>
           </div>
         </div>
@@ -58,7 +55,7 @@ const IntroSection = () => {
         <ul className={s.socialLinks}>
           <li className={s.socialLink}>
             <a
-              href="https://www.linkedin.com/in/zaanouni-ayoub/"
+              href={profile?.linkedin_url}
               target="_blank"
               rel="noreferrer"
               className={s.socialIcon}
@@ -69,7 +66,7 @@ const IntroSection = () => {
           </li>
           <li className={s.socialLink}>
             <a
-              href="https://github.com/Ayoubzaanouni"
+              href={profile?.github_url}
               target="_blank"
               rel="noreferrer"
               className={s.socialIcon}

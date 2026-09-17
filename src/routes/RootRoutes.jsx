@@ -10,6 +10,7 @@ export const routes = {
   Project: '/project/:id',
   Experiences : '/experiences',
   Resume: '/resume',
+  Admin: '/admin/*',
 };
 
 const scenes = {
@@ -18,6 +19,7 @@ const scenes = {
   Projects: lazy(() => import('../scenes/Projects/Projects')),
   Experiences: lazy(() => import('../scenes/Experiences/Experiences')),
   Resume: lazy(() => import('../scenes/Resume/Resume')),
+  Admin: lazy(() => import('../admin/AdminApp')),
 };
 
 function LazyScene({ name }) {
@@ -55,6 +57,10 @@ function RootRoutes() {
         <Route
           path={routes.Resume}
           element={<LazyScene name="Resume" />}
+        />
+        <Route
+          path={routes.Admin}
+          element={<LazyScene name="Admin" />}
         />
         <Route
           /*Modal*/ path={routes.Project}
