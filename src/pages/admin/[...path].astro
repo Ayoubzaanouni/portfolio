@@ -1,0 +1,10 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import AdminApp from '../../admin/AdminApp.jsx';
+
+export const prerender = false;
+---
+
+<Layout title="Admin | Ayoub Zaanouni" description="Portfolio content admin.">
+  <AdminApp client:only="react" />
+</Layout>

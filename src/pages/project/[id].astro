@@ -1,0 +1,70 @@
+---
+import BaseLayout from '../../layouts/BaseLayout/BaseLayout.astro';
+import { getProject } from '../../api/content';
+import { routes } from '../../routes';
+import { AiOutlineArrowLeft } from '@react-icons/all-files/ai/AiOutlineArrowLeft';
+import { BiLinkExternal } from '@react-icons/all-files/bi/BiLinkExternal';
+import { createElement } from 'react';
+import { renderToStaticMarkup } from 'react-dom/server';
+import s from '../../scenes/Projects/ModalProjectCard/ModalProjectCard.module.scss';
+
+export const prerender = false;
+
+const { id } = Astro.params;
+const project = await getProject(id);
+const linkIcon = renderToStaticMarkup(createElement(BiLinkExternal));
+const backIcon = renderToStaticMarkup(createElement(AiOutlineArrowLeft));
+
+if (!project) Astro.response.status = 404;
+---
+
+<BaseLayout
+  title={project ? `${project.title} | Ayoub Zaanouni` : 'Project not found'}
+  description={project?.description}
+>
+  <div class={s.cardWrapper}>
+    <p style="margin-bottom:1rem">
+      <a href={routes.Projects} style="display:inline-flex;align-items:center;gap:.4rem">
+        <Fragment set:html={backIcon} /> Back to projects
+      </a>
+    </p>
+
+    {project ? (
+      <>
+        <img
+          alt={project.title}
+          src={project.image_url}
+          width="100%"
+          class={s.image}
+          style="object-fit:cover"
+          loading="eager"
+        />
+
+        <div class={s.cardBody}>
+          <h1 class={s.title}>{project.title}</h1>
+          <div class={s.technologies}>
+            {project.technologies.map((tech) => <span>{tech}</span>)}
+          </div>
+          <p>{project.description}</p>
+        </div>
+
+        <div class={s.cardFooter}>
+          {project.site_url && (
+            <a href={project.site_url} target="_blank" rel="noreferrer">
+              <Fragment set:html={linkIcon} /> View project
+            </a>
+          )}
+          {project.repo_url && (
+            <a href={project.repo_url} target="_blank" rel="noreferrer">
+              <Fragment set:html={linkIcon} /> Know more
+            </a>
+          )}
+        </div>
+      </>
+    ) : (
+      <div class={s.cardBody}>
+        <h1 class={s.title}>Project not found</h1>
+      </div>
+    )}
+  </div>
+</BaseLayout>

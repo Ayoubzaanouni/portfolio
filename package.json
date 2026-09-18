@@ -3,41 +3,32 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@emailjs/browser": "^4.4.1",
+    "@astrojs/react": "^6.0.6",
+    "@astrojs/vercel": "^11.0.10",
     "@react-icons/all-files": "^4.1.0",
     "@supabase/supabase-js": "^2.116.0",
+    "astro": "^7.3.3",
     "classnames": "^2.3.2",
     "modern-normalize": "^1.1.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-github-calendar": "^3.3.0",
-    "react-google-recaptcha": "^3.1.0",
     "react-icons": "^5.4.0",
-    "react-lazy-load-image-component": "^1.5.1",
-    "react-media": "^1.10.0",
     "react-parallax-tilt": "^1.5.22",
-    "react-pdf": "^9.1.1",
-    "react-router-dom": "^6.3.0",
-    "react-transition-group": "^4.4.2",
+    "react-router-dom": "^7.18.4",
     "sass": "^1.83.0",
     "sweetalert2": "^11.15.3",
     "typewriter-effect": "^2.17.0"
   },
   "scripts": {
-    "start": "vite",
-    "build": "vite build",
-    "preview": "vite preview"
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
+    "start": "astro dev --port 3000",
+    "build": "astro build",
+    "preview": "astro preview",
+    "sync-fallback": "node scripts/sync-fallback.mjs"
   },
   "devDependencies": {
-    "@vitejs/plugin-react": "^4.3.2",
+    "esbuild": "^0.28.2",
     "sass-embedded": "^1.79.4",
-    "vite": "^5.4.8",
     "vite-plugin-svgr": "^4.2.0"
   }
 }

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import {
+  BrowserRouter,
   Navigate,
   NavLink,
   Route,
@@ -93,21 +94,23 @@ const AdminApp = () => {
   const session = useSession();
 
   return (
-    <Routes>
-      <Route path="login" element={<Login />} />
-      <Route
-        path="*"
-        element={
-          session === undefined ? (
-            <Preloader />
-          ) : session ? (
-            <Dashboard session={session} />
-          ) : (
-            <Navigate to="/admin/login" replace />
-          )
-        }
-      />
-    </Routes>
+    <BrowserRouter basename="/admin">
+      <Routes>
+        <Route path="login" element={<Login />} />
+        <Route
+          path="*"
+          element={
+            session === undefined ? (
+              <Preloader />
+            ) : session ? (
+              <Dashboard session={session} />
+            ) : (
+              <Navigate to="/admin/login" replace />
+            )
+          }
+        />
+      </Routes>
+    </BrowserRouter>
   );
 };
 

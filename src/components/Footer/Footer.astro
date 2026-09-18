@@ -1,0 +1,35 @@
+---
+import { AiFillGithub } from '@react-icons/all-files/ai/AiFillGithub';
+import { FaLinkedinIn } from '@react-icons/all-files/fa/FaLinkedinIn';
+import { createElement } from 'react';
+import { renderToStaticMarkup } from 'react-dom/server';
+import { getProfile } from '../../api/content';
+import s from './Footer.module.scss';
+
+const profile = await getProfile();
+const linkedinIcon = renderToStaticMarkup(createElement(FaLinkedinIn));
+const githubIcon = renderToStaticMarkup(createElement(AiFillGithub));
+---
+
+<div class={s.footer}>
+  <div class={s.container}>
+    <div class={s.copyright}>
+      <h1>Made by Ayoub Zaanouni</h1>
+    </div>
+
+    <div class={s.body}>
+      <ul class={s.socialIcons}>
+        <li>
+          <a href={profile?.linkedin_url} target="_blank" rel="noreferrer" aria-label="linkedin">
+            <Fragment set:html={linkedinIcon} />
+          </a>
+        </li>
+        <li>
+          <a href={profile?.github_url} target="_blank" rel="noreferrer" aria-label="github">
+            <Fragment set:html={githubIcon} />
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>

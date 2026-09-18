@@ -1,6 +1,6 @@
 # Personal Portfolio
 
-Welcome to my personal portfolio! This project showcases my work, skills, and experience as a software engineer. Built with **React** and styled with **Sass**, this portfolio reflects my dedication to creating visually appealing and functional web applications.
+Welcome to my personal portfolio! This project showcases my work, skills, and experience as a software engineer. Built with **Astro** (server-rendered, with React islands for interactive parts) and styled with **Sass**, this portfolio reflects my dedication to creating visually appealing and functional web applications.
 
 ## See My Work
 
@@ -16,10 +16,10 @@ Visit my portfolio at [ayoubzaanouni.com](https://ayoubzaanouni.com).
 
 ## Technologies Used
 
-- **Frontend Framework**: React (Vite)
+- **Frontend Framework**: Astro (SSR) with React islands for interactive UI and the `/admin` dashboard
 - **Styling**: Sass
 - **Content & Admin**: Supabase (Postgres, Auth, Storage), all on the free tier
-- **Deployment**: Vercel, deployed automatically by GitHub Actions
+- **Deployment**: Vercel (`@astrojs/vercel` adapter, SSR), deployed automatically by GitHub Actions
 
 ## Installation
 
@@ -48,7 +48,14 @@ and is edited at **`/admin`** (e.g. `https://ayoubzaanouni.com/admin`). Changes 
 In text fields, separate paragraphs with an empty line, use `**text**` for a purple highlight and `*text*` for bold.
 Skill icons come from `src/utils/iconRegistry.js`; add an import there to offer more icons.
 
-If Supabase is unreachable, the site falls back to the static data in `src/data/`.
+If Supabase is unreachable, the site falls back to the static data in `src/data/`. Since that's a
+second, hand-maintained copy of the same content, run `npm run sync-fallback` after making changes
+in `/admin` to regenerate those files from what's actually live (requires `PUBLIC_SUPABASE_URL` /
+`PUBLIC_SUPABASE_ANON_KEY` in `.env.local`).
+
+Public pages (`/`, `/about`, `/projects`, `/experiences`, `/resume`, `/project/:id`) are
+server-rendered per request, so content is real, crawlable HTML — not something that only appears
+after JavaScript runs. `/admin` stays a client-only React app (nothing there needs to be crawlable).
 
 ## One-time setup
 
@@ -64,11 +71,15 @@ If Supabase is unreachable, the site falls back to the static data in `src/data/
 6. In **Project Settings → API**, copy the *Project URL* and the *anon public* key.
 
 ### 2. Vercel
-1. Import the repo in [Vercel](https://vercel.com) (framework: Vite) or run `npx vercel link` locally.
-2. In **Settings → Environment Variables**, add `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY`
-   for Production and Preview. If you connected Supabase through Vercel's integration, its
-   `NEXT_PUBLIC_SUPABASE_URL` / `SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` are picked up automatically
-   (see `vite.config.js`).
+1. Import the repo in [Vercel](https://vercel.com) (framework: Astro) or run `npx vercel link` locally.
+2. In **Settings → Environment Variables**, add `PUBLIC_SUPABASE_URL` and `PUBLIC_SUPABASE_ANON_KEY`
+   for Production and Preview.
+3. Add the contact-form variables too — see `.env.example` for the full list.
+   `PUBLIC_RECAPTCHA_SITE_KEY` is public; `RECAPTCHA_SECRET_KEY`, `EMAILJS_SERVICE_ID`,
+   `EMAILJS_TEMPLATE_ID` and `EMAILJS_PRIVATE_KEY` are server-only and back
+   [`src/pages/api/contact.js`](src/pages/api/contact.js), which verifies the reCAPTCHA token with
+   Google before sending the email itself via EmailJS's REST API — the browser never talks to
+   EmailJS directly.
 
 ### 3. GitHub Actions (automatic deployment)
 Deployments are done by [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml):
@@ -91,14 +102,16 @@ which pings the database every 3 days so the free project isn't paused for inact
 ## Folder Structure
 
 - `src`
-  - `admin/` - The `/admin` dashboard (login, content editors).
+  - `pages/` - Astro routes (`.astro` files = pages; `pages/api/contact.js` = the contact-form API route).
+  - `admin/` - The `/admin` dashboard (login, content editors) — a client-only React app.
   - `api/content.js` - Reads and writes content in Supabase, with static fallback.
-  - `components/` - Contains reusable React components.
+  - `components/` - Reusable Astro components (chrome: header, nav, footer, theme toggle).
+  - `islands/` - React components mounted client-side inside Astro pages (Tilt avatar, résumé viewer).
+  - `scenes/` - Leftover per-feature styles/components still referenced by pages and islands.
   - `data/` - Fallback content used when Supabase is not configured or unreachable.
   - `assets/` - Includes images, icons, and other static files.
-  - `scenes/` - Contains individual pages for the portfolio.
-  - `App.jsx` - Main component that renders the application.
-  - `index.jsx` - Entry point of the React application.
+  - `layouts/` - Shared Astro page shells (`Layout.astro` = `<head>`; `BaseLayout`/`HomeLayout` = header+content+footer).
+- `scripts/sync-fallback.mjs` - Regenerates `src/data/*` from live Supabase content.
 - `supabase/` - Database schema and seed data.
 
 ## Contributions

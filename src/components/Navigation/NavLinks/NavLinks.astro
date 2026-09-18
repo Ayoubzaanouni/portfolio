@@ -1,0 +1,33 @@
+---
+import { AiOutlineFundProjectionScreen } from '@react-icons/all-files/ai/AiOutlineFundProjectionScreen';
+import { AiOutlineHome } from '@react-icons/all-files/ai/AiOutlineHome';
+import { AiOutlineUser } from '@react-icons/all-files/ai/AiOutlineUser';
+import { CgFileDocument } from '@react-icons/all-files/cg/CgFileDocument';
+import { MdWorkOutline } from 'react-icons/md';
+import { createElement } from 'react';
+import { renderToStaticMarkup } from 'react-dom/server';
+import { routes } from '../../../routes';
+import s from './NavLinks.module.scss';
+
+const links = [
+  { name: 'Home', to: routes.Home, icon: AiOutlineHome },
+  { name: 'About', to: routes.About, icon: AiOutlineUser },
+  { name: 'Projects', to: routes.Projects, icon: AiOutlineFundProjectionScreen },
+  { name: 'Experiences', to: routes.Experiences, icon: MdWorkOutline },
+  { name: 'Resume', to: routes.Resume, icon: CgFileDocument },
+].map((link) => ({ ...link, iconHtml: renderToStaticMarkup(createElement(link.icon)) }));
+
+const currentPath = Astro.url.pathname;
+const isActive = (to) => (to === '/' ? currentPath === '/' : currentPath.startsWith(to));
+---
+
+<ul class={s.navBar}>
+  {links.map(({ name, to, iconHtml }) => (
+    <li>
+      <a href={to} class={isActive(to) ? 'active' : undefined}>
+        <Fragment set:html={iconHtml} />
+        {name}
+      </a>
+    </li>
+  ))}
+</ul>

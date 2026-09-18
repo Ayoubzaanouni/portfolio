@@ -1,0 +1,16 @@
+---
+interface Props {
+  class?: string;
+}
+const { class: className } = Astro.props;
+---
+
+<div class={className}>
+  <a href="/" aria-label="site logo">
+    <img
+      style="width:60px;height:60px;padding-top:10px"
+      src="https://res.cloudinary.com/deiimmbyt/image/upload/v1735083206/logo_eyier3.png"
+      alt="logo"
+    />
+  </a>
+</div>

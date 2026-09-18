@@ -1,0 +1,49 @@
+---
+import BaseLayout from '../layouts/BaseLayout/BaseLayout.astro';
+import { getExperiences } from '../api/content';
+import s from '../scenes/Experiences/Experiences.module.scss';
+import cardStyles from '../scenes/Experiences/WorkCard/WorkCard.module.scss';
+
+const experiences = (await getExperiences()) ?? [];
+---
+
+<BaseLayout title="Experiences | Ayoub Zaanouni" description="Work experience of Ayoub Zaanouni, back-end developer.">
+  <div class={s.content}>
+    <h1 class={s.title}>
+      My work <strong class={s.purple}>Experiences</strong>
+    </h1>
+
+    <ul class={s.projects}>
+      {experiences.map((experience) => (
+        <li class={cardStyles.card}>
+          <div class={cardStyles.cardWrapper}>
+            {experience.company_logo_url && (
+              <div class={cardStyles.logoContainer}>
+                <img
+                  alt="company-logo"
+                  src={experience.company_logo_url}
+                  width="100%"
+                  style="object-fit:contain"
+                  loading="lazy"
+                  decoding="async"
+                />
+              </div>
+            )}
+
+            <div class={cardStyles.cardBody}>
+              <h3 class={cardStyles.title}>{experience.job_title}</h3>
+              <h4 class={cardStyles.company}>{experience.company}</h4>
+              <p class={cardStyles.dates}>{experience.dates}</p>
+              <p class={cardStyles.location}>{experience.location}</p>
+              <p class={cardStyles.description}>{experience.description}</p>
+              <br />
+              <p class={cardStyles.skills}>
+                <strong>Skills:</strong> {experience.skills.join(', ')}
+              </p>
+            </div>
+          </div>
+        </li>
+      ))}
+    </ul>
+  </div>
+</BaseLayout>

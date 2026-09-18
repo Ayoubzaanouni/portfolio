@@ -1,0 +1,100 @@
+---
+import s from './MainNavigation.module.scss';
+import NavLinks from '../NavLinks/NavLinks.astro';
+import BtnToggleTheme from '../../BtnToggleTheme/BtnToggleTheme.astro';
+import Logo from '../../Logo/Logo.astro';
+---
+
+<Logo class={s.desktop} />
+
+<nav class={s.desktop}>
+  <NavLinks />
+  <BtnToggleTheme />
+</nav>
+
+<button class={s.burger} aria-label="open menu" data-drawer-open>
+  <span></span>
+  <span></span>
+  <span></span>
+</button>
+
+<Logo class={s.mobile} />
+<BtnToggleTheme class={s.mobile} />
+
+<div data-backdrop></div>
+<aside data-drawer>
+  <nav class={s.navigationDrawerNav}>
+    <NavLinks />
+  </nav>
+</aside>
+
+<style>
+  .burger {
+    padding: 0.25rem 1.5rem;
+    background: transparent;
+    border: none;
+    display: none;
+    flex-direction: column;
+    justify-content: space-around;
+    cursor: pointer;
+  }
+  .burger span {
+    display: block;
+    background-color: var(--primary);
+    height: 4px;
+    width: 29px;
+    margin-top: 3px;
+    margin-bottom: 3px;
+  }
+  @media (max-width: 768px) {
+    .burger {
+      display: flex;
+    }
+  }
+
+  [data-backdrop] {
+    position: fixed;
+    inset: 0;
+    background: var(--backdrop);
+    z-index: 10;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 200ms;
+  }
+  [data-drawer] {
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 100;
+    height: 100vh;
+    width: 70%;
+    background: var(--bg-primary);
+    box-shadow: var(--drawer-shadow);
+    transform: translateX(-100%);
+    transition: transform 200ms;
+  }
+  :global(body.drawer-open) [data-backdrop] {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  :global(body.drawer-open) [data-drawer] {
+    transform: translateX(0);
+  }
+</style>
+
+<script>
+  const openBtn = document.querySelector('[data-drawer-open]');
+  const backdrop = document.querySelector('[data-backdrop]');
+  const drawer = document.querySelector('[data-drawer]');
+
+  const setOpen = (open) => {
+    document.body.classList.toggle('drawer-open', open);
+    document.body.classList.toggle('overflow-hidden', open);
+  };
+
+  openBtn?.addEventListener('click', () => setOpen(true));
+  backdrop?.addEventListener('click', () => setOpen(false));
+  drawer?.addEventListener('click', (e) => {
+    if (e.target.closest('a')) setOpen(false);
+  });
+</script>

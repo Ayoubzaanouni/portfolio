@@ -1,0 +1,94 @@
+---
+import BaseLayout from '../layouts/BaseLayout/BaseLayout.astro';
+import GithubActivity from '../scenes/About/GithubActivity/GithubActivity.jsx';
+import { createElement } from 'react';
+import { renderToStaticMarkup } from 'react-dom/server';
+import { getProfile, getSkills } from '../api/content';
+import { getIcon } from '../utils/iconRegistry';
+import { richTextToHtml } from '../utils/richText';
+import Snap from '../assets/snap-code.png';
+import s from '../scenes/About/About.module.scss';
+import cardStyles from '../scenes/About/AboutTextCard/AboutTextCard.module.scss';
+import techStyles from '../scenes/About/TechSkills/TechSkills.module.scss';
+import toolStyles from '../scenes/About/ToolsUsed/ToolsUsed.module.scss';
+
+const [profile, skills] = await Promise.all([getProfile(), getSkills()]);
+
+const renderIcons = (category, styles) =>
+  (skills ?? [])
+    .filter((skill) => skill.category === category)
+    .map((skill) => {
+      const Icon = getIcon(skill.icon_key);
+      return {
+        id: skill.id,
+        name: skill.name,
+        html: Icon ? renderToStaticMarkup(createElement(Icon, { 'aria-label': skill.name })) : null,
+      };
+    });
+
+const techIcons = renderIcons('skill', techStyles);
+const toolIcons = renderIcons('tool', toolStyles);
+---
+
+<BaseLayout title="About | Ayoub Zaanouni" description="Back-end developer specializing in PHP/Symfony — background, skills and tools.">
+  <div class={s.content}>
+    <div class={s.about}>
+      <div class={s.aboutDescription}>
+        <h1 class={s.title}>
+          Learn More <b class={s.purple}>About Me</b>
+        </h1>
+
+        {profile && (
+          <div class={cardStyles.card}>
+            <p style="text-align:justify">
+              {profile.about_paragraphs.map((text, i) => (
+                <span>
+                  {i > 0 && <><br /><br /></>}
+                  <Fragment set:html={richTextToHtml(text, cardStyles.purple)} />
+                </span>
+              ))}
+            </p>
+            <ul style="margin-left:14px">
+              {profile.hobbies.map((hobby) => (
+                <li class={cardStyles.aboutActivity}>- {hobby}</li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </div>
+
+      <div class={s.aboutImg}>
+        <img src={Snap.src ?? Snap} alt="about" />
+      </div>
+    </div>
+
+    <h2 class={s.skills}>
+      Professional <b class={s.purple}>Skillset</b>
+    </h2>
+    <ul class={techStyles.container}>
+      {techIcons.map(({ id, name, html }) => (
+        <li class={techStyles.techIcon} title={name}>
+          {html ? <Fragment set:html={html} /> : <span style="font-size:1.2rem">{name}</span>}
+        </li>
+      ))}
+    </ul>
+
+    <h2 class={s.skills}>
+      <b class={s.purple}>Tools</b> I Use
+    </h2>
+    <ul class={toolStyles.container}>
+      {toolIcons.map(({ id, name, html }) => (
+        <li class={techStyles.techIcon} title={name}>
+          {html ? <Fragment set:html={html} /> : <span style="font-size:1.2rem">{name}</span>}
+        </li>
+      ))}
+    </ul>
+
+    <a href={profile?.github_url}>
+      <h2 class={s.githubActivity}>
+        My <b class={s.purple}>Coding</b> Journey
+      </h2>
+    </a>
+    <GithubActivity client:visible />
+  </div>
+</BaseLayout>

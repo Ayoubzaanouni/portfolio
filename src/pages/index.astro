@@ -1,0 +1,102 @@
+---
+import HomeLayout from '../layouts/HomeLayout/HomeLayout.astro';
+import AvatarTilt from '../islands/AvatarTilt.jsx';
+import Typewriter from '../components/UIElements/Typewriter/Typewriter.jsx';
+import ContactMe from '../scenes/Home/IntroSection/ContactMe.jsx';
+import { AiFillGithub } from '@react-icons/all-files/ai/AiFillGithub';
+import { FaLinkedinIn } from '@react-icons/all-files/fa/FaLinkedinIn';
+import { createElement } from 'react';
+import { renderToStaticMarkup } from 'react-dom/server';
+import { getProfile } from '../api/content';
+import { richTextToHtml } from '../utils/richText';
+import handIcon from '../assets/hand.png';
+import homeMainIcon from '../assets/bureau.png';
+import defaultAvatar from '../assets/me.png';
+import mainSection from '../scenes/Home/MainSection/MainSection.module.scss';
+import s from '../scenes/Home/IntroSection/IntroSection.module.scss';
+
+const profile = await getProfile();
+const linkedinIcon = renderToStaticMarkup(createElement(FaLinkedinIn));
+const githubIcon = renderToStaticMarkup(createElement(AiFillGithub));
+---
+
+<HomeLayout>
+  <section class={mainSection.content}>
+    <div class={mainSection.header}>
+      <div class={mainSection.greetingContainer}>
+        <h2 class={mainSection.title}>Hi There!</h2>
+        <img src={handIcon.src ?? handIcon} class={mainSection.handIcon} alt="" />
+      </div>
+
+      <h1 class={mainSection.mainTitle}>
+        I'M
+        <strong class={mainSection.mainName}> AYOUB ZAANOUNI</strong>
+      </h1>
+
+      <div class={mainSection.typewriter}>
+        <Typewriter
+          client:load
+          strings={[
+            'Software Engineer',
+            'Continuously Learning',
+            'Solving Problems',
+            'Pushing Boundaries',
+            'Building Solutions',
+          ]}
+          wrapperClassName={mainSection.typewriterInner}
+          cursorClassName={mainSection.typewriterCursor}
+        />
+      </div>
+    </div>
+
+    <div style="padding-left:170px" class={mainSection.spacer} />
+
+    <img
+      alt="home-img"
+      src={homeMainIcon.src ?? homeMainIcon}
+      width="350"
+      height="350"
+      loading="eager"
+    />
+  </section>
+
+  <section class={s.content}>
+    <div class={s.introduction}>
+      <div class={s.textAndImage}>
+        <div class={s.introductionText}>
+          <h1 class={s.title}>
+            Welcome to My <span class={s.purple}>Portfolio</span>
+          </h1>
+          <div class={s.description}>
+            {profile?.intro_paragraphs.map((text) => (
+              <p set:html={richTextToHtml(text, s.purple)} />
+            ))}
+          </div>
+        </div>
+        <div class={s.avatarContainer}>
+          <AvatarTilt client:visible src={profile?.avatar_url || (defaultAvatar.src ?? defaultAvatar)} />
+        </div>
+      </div>
+    </div>
+
+    <div class={s.introSocial}>
+      <h1>Get In Touch</h1>
+      <p>Don't hesitate to <span class={s.purple}>reach out</span> to me</p>
+
+      <ul class={s.socialLinks}>
+        <li class={s.socialLink}>
+          <a href={profile?.linkedin_url} target="_blank" rel="noreferrer" class={s.socialIcon} aria-label="linkedin">
+            <Fragment set:html={linkedinIcon} />
+          </a>
+        </li>
+        <li class={s.socialLink}>
+          <a href={profile?.github_url} target="_blank" rel="noreferrer" class={s.socialIcon} aria-label="github">
+            <Fragment set:html={githubIcon} />
+          </a>
+        </li>
+      </ul>
+
+      <ContactMe client:visible />
+    </div>
+  </section>
+</HomeLayout>

@@ -1,0 +1,18 @@
+---
+import BaseLayout from '../layouts/BaseLayout/BaseLayout.astro';
+import ResumeViewer from '../islands/ResumeViewer.jsx';
+import { getProfile } from '../api/content';
+import s from '../scenes/Resume/Resume.module.scss';
+
+const profile = await getProfile();
+---
+
+<BaseLayout title="Resume | Ayoub Zaanouni" description="Resume of Ayoub Zaanouni, back-end developer.">
+  <div class={s.content}>
+    <div class={s.header}>
+      <h1 class={s.title}>My Resume</h1>
+    </div>
+
+    <ResumeViewer client:load resumeUrl={profile?.resume_url} resumeFilename={profile?.resume_filename} />
+  </div>
+</BaseLayout>

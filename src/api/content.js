@@ -5,36 +5,26 @@ import fallbackProjects from '../data/projects';
 import fallbackSkills from '../data/skills';
 
 // Static data used when Supabase is not configured or unreachable
-// (for example while a free project is paused).
+// (for example while a free project is paused). Each file's shape matches
+// its table's row shape exactly, so no reshaping is needed here — keep it
+// that way, and regenerate the files with `npm run sync-fallback`.
 const fallback = {
   profile: fallbackProfile,
-  projects: fallbackProjects.map((p, i) => ({
-    id: p.id,
-    title: p.title,
-    description: p.description,
-    image_url: p.image?.src ?? null,
-    site_url: p.links?.site || null,
-    repo_url: p.links?.repo || null,
-    technologies: p.technologies,
-    sort_order: i,
-  })),
-  experiences: fallbackExperiences.map((e, i) => ({
-    id: String(e.id),
-    company_logo_url: e.companyLogo,
-    job_title: e.jobTitle,
-    company: e.company,
-    location: e.location,
-    dates: e.dates,
-    description: e.description,
-    skills: e.skills,
-    sort_order: i,
-  })),
+  projects: fallbackProjects,
+  experiences: fallbackExperiences,
   skills: fallbackSkills,
 };
 
+// This module runs both in the browser (islands) and on the server (Astro
+// SSR, per request). A cross-request cache would leak one visitor's content
+// to the next on a warm server instance and go stale after an admin edit
+// until that instance recycles — so only cache client-side, where the
+// module instance really is scoped to one tab.
+const isServer = typeof window === 'undefined';
 const cache = new Map();
 
 const cached = (key, load) => {
+  if (isServer) return load();
   if (!cache.has(key)) {
     cache.set(
       key,
@@ -98,7 +88,7 @@ export const getSkills = () =>
 const requireClient = () => {
   if (!supabase) {
     throw new Error(
-      'Supabase is not configured. Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY.',
+      'Supabase is not configured. Set PUBLIC_SUPABASE_URL and PUBLIC_SUPABASE_ANON_KEY.',
     );
   }
   return supabase;

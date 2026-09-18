@@ -1,0 +1,41 @@
+---
+import BaseLayout from '../layouts/BaseLayout/BaseLayout.astro';
+import { getProjects } from '../api/content';
+import { routes } from '../routes';
+import s from '../scenes/Projects/Projects.module.scss';
+import cardStyles from '../scenes/Projects/ProjectCard/ProjectCard.module.scss';
+
+const projects = (await getProjects()) ?? [];
+---
+
+<BaseLayout title="Projects | Ayoub Zaanouni" description="Recent projects by Ayoub Zaanouni.">
+  <div class={s.content}>
+    <h1 class={s.title}>
+      Recent <strong class={s.purple}>Projects</strong>
+    </h1>
+    <p class={s.subtitle}>Take a look at some of my recent work.</p>
+
+    <ul class={s.projects}>
+      {projects.map((project) => (
+        <li class={cardStyles.card}>
+          <div class={cardStyles.cardWrapper}>
+            <a href={`${routes.Project}/${project.id}`}>
+              <img
+                alt="card-img"
+                src={project.image_url}
+                width="100%"
+                style="min-height:10rem;object-fit:cover"
+                loading="lazy"
+                decoding="async"
+              />
+            </a>
+            <div class={cardStyles.cardBody}>
+              <h3 class={cardStyles.title}>{project.title}</h3>
+              <p class={cardStyles.description}>{project.description}</p>
+            </div>
+          </div>
+        </li>
+      ))}
+    </ul>
+  </div>
+</BaseLayout>

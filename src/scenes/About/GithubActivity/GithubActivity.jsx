@@ -1,5 +1,10 @@
 import s from './GithubActivity.module.scss';
-import GitHubCalendar from 'react-github-calendar';
+import * as GitHubCalendarModule from 'react-github-calendar';
+
+// Defensive CJS/ESM interop unwrap: this package's default export doesn't
+// always resolve cleanly through every bundler's interop (seen returning the
+// whole module namespace instead of the component under Astro/Rolldown).
+const GitHubCalendar = GitHubCalendarModule.default?.default ?? GitHubCalendarModule.default;
 
 const GithubActivity = () => {
   const colorTheme = {

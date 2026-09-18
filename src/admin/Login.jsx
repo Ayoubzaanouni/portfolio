@@ -35,8 +35,8 @@ const Login = () => {
 
         {!isSupabaseConfigured ? (
           <p>
-            Supabase is not configured. Set VITE_SUPABASE_URL and
-            VITE_SUPABASE_ANON_KEY.
+            Supabase is not configured. Set PUBLIC_SUPABASE_URL and
+            PUBLIC_SUPABASE_ANON_KEY.
           </p>
         ) : (
           <form className={s.form} onSubmit={submit}>

@@ -1,0 +1,17 @@
+---
+import s from './Header.module.scss';
+import MainNavigation from '../Navigation/MainNavigation/MainNavigation.astro';
+---
+
+<div class={s.header} data-header>
+  <div class={s.container}>
+    <MainNavigation />
+  </div>
+</div>
+
+<script define:vars={{ highlighted: s.highlighted }}>
+  const header = document.querySelector('[data-header]');
+  const onScroll = () => header?.classList.toggle(highlighted, window.scrollY >= 20);
+  window.addEventListener('scroll', onScroll);
+  onScroll();
+</script>
