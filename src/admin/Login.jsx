@@ -12,7 +12,9 @@ const Login = () => {
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
 
-  if (session) return <Navigate to="/admin" replace />;
+  // Relative to the router's basename ("/admin") — not an absolute "/admin"
+  // path, which would resolve to "/admin/admin".
+  if (session) return <Navigate to="/" replace />;
 
   const submit = async (e) => {
     e.preventDefault();

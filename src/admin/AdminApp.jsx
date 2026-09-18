@@ -68,7 +68,7 @@ const Dashboard = ({ session }) => {
           <>
             <nav className={s.tabs}>
               {tabs.map(([path, label]) => (
-                <NavLink key={path} to={`/admin/${path}`}>
+                <NavLink key={path} to={`/${path}`}>
                   {label}
                 </NavLink>
               ))}
@@ -78,10 +78,10 @@ const Dashboard = ({ session }) => {
               {tabs.map(([path, , Component]) => (
                 <Route key={path} path={path} element={<Component />} />
               ))}
-              <Route
-                path="*"
-                element={<Navigate to="/admin/projects" replace />}
-              />
+              {/* Relative to the router's basename ("/admin") — not an
+                  absolute "/admin/projects" path, which would resolve to
+                  "/admin/admin/projects". */}
+              <Route path="*" element={<Navigate to="/projects" replace />} />
             </Routes>
           </>
         )}
@@ -105,7 +105,10 @@ const AdminApp = () => {
             ) : session ? (
               <Dashboard session={session} />
             ) : (
-              <Navigate to="/admin/login" replace />
+              // Relative to the router's basename ("/admin") — not an
+              // absolute "/admin/login" path, which would resolve to
+              // "/admin/admin/login".
+              <Navigate to="/login" replace />
             )
           }
         />
