@@ -1,6 +1,6 @@
 {
-  "name": "Portfolio React Application",
-  "short_name": "React-Portfolio",
+  "name": "Ayoub Zaanouni | Portfolio",
+  "short_name": "A. Zaanouni",
   "icons": [
     {
       "src": "/icons/48.png",
@@ -38,7 +38,7 @@
   "orientation": "portrait-primary",
   "background_color": "#000",
   "theme_color": "#181a27",
-  "description": "A simple Portfolio App, implementing a lot of PWA",
+  "description": "Ayoub Zaanouni's portfolio: back-end developer specializing in PHP/Symfony.",
   "dir": "ltr",
   "lang": "en-US"
 }

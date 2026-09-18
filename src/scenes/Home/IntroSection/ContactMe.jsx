@@ -1,35 +1,18 @@
-import React, { useState, useEffect, useRef } from 'react';
-import emailjs from 'emailjs-com';
+import React, { useState, useRef } from 'react';
+import emailjs from '@emailjs/browser';
 import Swal from 'sweetalert2';
 import ReCAPTCHA from 'react-google-recaptcha';
 import s from './IntroSection.module.scss';
 
+const EMAILJS_SERVICE_ID = import.meta.env.VITE_EMAILJS_SERVICE_ID;
+const EMAILJS_TEMPLATE_ID = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
+const EMAILJS_PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
+const RECAPTCHA_SITE_KEY = import.meta.env.VITE_RECAPTCHA_SITE_KEY;
+
 export default function ContactMe() {
   const [loading, setLoading] = useState(false);
   const recaptchaRef = useRef();
-
-  useEffect(() => {
-    const emailStatus = sessionStorage.getItem('emailStatus');
-    
-    if (emailStatus) {
-      if (emailStatus === 'success') {
-        Swal.fire({
-          icon: 'success',
-          title: 'Email successfully sent!',
-          text: 'Thank you for reaching out to me.',
-          confirmButtonText: 'Okay'
-        });
-      } else if (emailStatus === 'error') {
-        Swal.fire({
-          icon: 'error',
-          title: 'Failed to send email',
-          text: 'There was an error while sending the email.',
-          confirmButtonText: 'Try again'
-        });
-      }
-      sessionStorage.removeItem('emailStatus');
-    }
-  }, []);
+  const formRef = useRef();
 
   function sendEmail(e) {
     e.preventDefault();
@@ -64,23 +47,39 @@ export default function ContactMe() {
     }
 
     emailjs
-      .sendForm('service_vk9p1el', 'template_7sorgcu', e.target, 'gHU1oDul3m56qE1QK')
+      .sendForm(
+        EMAILJS_SERVICE_ID,
+        EMAILJS_TEMPLATE_ID,
+        e.target,
+        EMAILJS_PUBLIC_KEY,
+      )
       .then(
-        (result) => {
+        () => {
           setLoading(false);
-          sessionStorage.setItem('emailStatus', 'success');
-          window.location.reload();
+          formRef.current.reset();
+          recaptchaRef.current.reset();
+          Swal.fire({
+            icon: 'success',
+            title: 'Email successfully sent!',
+            text: 'Thank you for reaching out to me.',
+            confirmButtonText: 'Okay',
+          });
         },
-        (error) => {
+        () => {
           setLoading(false);
-          sessionStorage.setItem('emailStatus', 'error');
-          window.location.reload();
-        }
+          recaptchaRef.current.reset();
+          Swal.fire({
+            icon: 'error',
+            title: 'Failed to send email',
+            text: 'There was an error while sending the email.',
+            confirmButtonText: 'Try again',
+          });
+        },
       );
   }
 
   return (
-    <form className={s.contactForm} onSubmit={sendEmail}>
+    <form className={s.contactForm} ref={formRef} onSubmit={sendEmail}>
       <label htmlFor="name">Name</label>
       <input type="text" id="name" name="from_name" placeholder="Enter your name" required />
       <label htmlFor="email">Email</label>
@@ -90,10 +89,7 @@ export default function ContactMe() {
       <label htmlFor="message">Message</label>
       <textarea id="message" name="message" placeholder="Type your message" required />
 
-      <ReCAPTCHA
-        sitekey="6Le04qQqAAAAAEkpS8pmHbKRVPIOal5T49qmUK4G"
-        ref={recaptchaRef}
-      />
+      <ReCAPTCHA sitekey={RECAPTCHA_SITE_KEY} ref={recaptchaRef} />
       <br />
 
       <button type="submit" disabled={loading} className='Send'>Send</button>
