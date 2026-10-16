@@ -1,25 +1,32 @@
 import React, { useState, useRef } from 'react';
-import emailjs from '@emailjs/browser';
+import emailjs from 'emailjs-com';
 import Swal from 'sweetalert2';
-import ReCAPTCHA from 'react-google-recaptcha';
 import s from './IntroSection.module.scss';
-
-const EMAILJS_SERVICE_ID = import.meta.env.VITE_EMAILJS_SERVICE_ID;
-const EMAILJS_TEMPLATE_ID = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
-const EMAILJS_PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
-const RECAPTCHA_SITE_KEY = import.meta.env.VITE_RECAPTCHA_SITE_KEY;
 
 export default function ContactMe() {
   const [loading, setLoading] = useState(false);
-  const recaptchaRef = useRef();
   const formRef = useRef();
+
+  const showSuccess = () => Swal.fire({
+    icon: 'success',
+    title: 'Email successfully sent!',
+    text: 'Thank you for reaching out to me.',
+    confirmButtonText: 'Okay',
+  });
 
   function sendEmail(e) {
     e.preventDefault();
 
-    setLoading(true);
+    if (loading) return;
 
-    const email = e.target.from_email.value;
+    const form = e.currentTarget;
+    if (form.elements.website.value) {
+      form.reset();
+      showSuccess();
+      return;
+    }
+
+    const email = form.elements.from_email.value;
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     if (!emailRegex.test(email)) {
@@ -33,53 +40,34 @@ export default function ContactMe() {
       return;
     }
 
-    const captchaValue = recaptchaRef.current.getValue();
-
-    if (!captchaValue) {
-      Swal.fire({
-        icon: 'warning',
-        title: 'reCAPTCHA not verified',
-        text: 'Please verify that you are not a robot.',
-        confirmButtonText: 'Okay'
-      });
-      setLoading(false);
-      return;
-    }
+    setLoading(true);
 
     emailjs
-      .sendForm(
-        EMAILJS_SERVICE_ID,
-        EMAILJS_TEMPLATE_ID,
-        e.target,
-        EMAILJS_PUBLIC_KEY,
-      )
+      .sendForm('service_vk9p1el', 'template_7sorgcu', form, 'gHU1oDul3m56qE1QK')
       .then(
         () => {
           setLoading(false);
           formRef.current.reset();
-          recaptchaRef.current.reset();
-          Swal.fire({
-            icon: 'success',
-            title: 'Email successfully sent!',
-            text: 'Thank you for reaching out to me.',
-            confirmButtonText: 'Okay',
-          });
+          showSuccess();
         },
         () => {
           setLoading(false);
-          recaptchaRef.current.reset();
           Swal.fire({
             icon: 'error',
             title: 'Failed to send email',
             text: 'There was an error while sending the email.',
             confirmButtonText: 'Try again',
           });
-        },
+        }
       );
   }
 
   return (
     <form className={s.contactForm} ref={formRef} onSubmit={sendEmail}>
+      <div className={s.honeypot} aria-hidden="true">
+        <label htmlFor="contact-website">Website</label>
+        <input type="text" id="contact-website" name="website" tabIndex={-1} autoComplete="off" />
+      </div>
       <label htmlFor="name">Name</label>
       <input type="text" id="name" name="from_name" placeholder="Enter your name" required />
       <label htmlFor="email">Email</label>
@@ -88,9 +76,6 @@ export default function ContactMe() {
       <input type="text" id="subject" name="subject" placeholder="Enter subject" required />
       <label htmlFor="message">Message</label>
       <textarea id="message" name="message" placeholder="Type your message" required />
-
-      <ReCAPTCHA sitekey={RECAPTCHA_SITE_KEY} ref={recaptchaRef} />
-      <br />
 
       <button type="submit" disabled={loading} className='Send'>Send</button>
     </form>
