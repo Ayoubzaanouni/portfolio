@@ -56,6 +56,35 @@ Skill icons come from `src/utils/iconRegistry.js`; add an import there to offer 
 
 If Supabase is unreachable, the site falls back to the static data in `src/data/`.
 
+## English and French portfolio
+
+The public portfolio selects French when the visitor’s primary browser language is
+French, and English otherwise. This is a language preference, not physical
+geolocation. The language selector lets visitors override the choice and remembers
+it in this browser. The selector is available in the desktop and mobile header,
+and on the CV page. Navigation, home, about, projects, experiences, contact-form
+feedback and the CV page follow the same choice. Technical names and company
+names are preserved; the admin interface stays in English.
+
+For an existing Supabase project, run
+[`supabase/migrations/20261016_bilingual_resumes.sql`](supabase/migrations/20261016_bilingual_resumes.sql)
+and
+[`supabase/migrations/20261016_bilingual_portfolio.sql`](supabase/migrations/20261016_bilingual_portfolio.sql)
+in the Supabase SQL Editor **before using the updated admin editors**. It adds the
+language-specific fields and preserves the existing CV as English. New projects
+get these fields from `schema.sql`; do not rerun `seed.sql` on live content.
+
+In **Admin → Resume**, upload the English and French PDFs separately, each with
+its own download filename and Save button. Each upload gets a separate storage
+path. If one language is missing, the public page shows the available version
+with a notice. Existing single-CV records continue to work before migration.
+
+In **Admin → Profile / Projects / Experiences / Skills**, edit the English and
+optional French fields separately. French admin content takes precedence; empty
+French fields use the built-in translation for known original text, or English
+for new content. Changing an English source text does not reuse its old built-in
+translation. New translations can be added through the admin without redeploying.
+
 ## One-time setup
 
 ### 1. Supabase (free)

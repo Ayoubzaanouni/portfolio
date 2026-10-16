@@ -1,3 +1,4 @@
+import { useTranslation } from '../../i18n/useTranslation';
 import Snap from '../../assets/snap-code.png';
 import BaseLayout from '../../layouts/BaseLayout/BaseLayout';
 import { getProfile } from '../../api/content';
@@ -8,7 +9,9 @@ import GithubActivity from './GithubActivity/GithubActivity';
 import TechSkills from './TechSkills/TechSkills';
 import ToolsUsed from './ToolsUsed/ToolsUsed';
 const About = () => {
-  const { data: profile } = useAsync(getProfile);
+  const { t, localize } = useTranslation();
+  const { data } = useAsync(getProfile);
+  const profile = localize(data, ['about_paragraphs', 'hobbies']);
 
   return (
     <BaseLayout>
@@ -16,30 +19,30 @@ const About = () => {
         <div className={s.about}>
           <div className={s.aboutDescription}>
             <h1 className={s.title}>
-              Learn More <b className={s.purple}>About Me</b>
+              {t('Learn More')} <b className={s.purple}>{t('About Me')}</b>
             </h1>
             <AboutTextCard profile={profile} />
           </div>
 
           <div className={s.aboutImg}>
-            <img src={Snap} alt="about" />
+            <img src={Snap} alt={t('Profile photo')} />
           </div>
         </div>
 
         <h2 className={s.skills}>
-          Professional <b className={s.purple}>Skillset</b>
+          {t('Professional')} <b className={s.purple}>{t('Skillset')}</b>
         </h2>
         <TechSkills />
 
         <h2 className={s.skills}>
-          <b className={s.purple}>Tools</b> I Use
+          <b className={s.purple}>{t('Tools')}</b> {t('I Use')}
         </h2>
 
       <ToolsUsed />
 
         <a href={profile?.github_url}>
           <h2 className={s.githubActivity}>
-            My <b className={s.purple}>Coding</b> Journey
+            {t('My')} <b className={s.purple}>{t('Coding')}</b> {t('Journey')}
           </h2>
         
           <GithubActivity />

@@ -1,8 +1,10 @@
+import { useTranslation } from '../../../i18n/useTranslation';
 import s from './WorkCard.module.scss';
 import { Link, useLocation } from 'react-router-dom';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 
 const WorkCard = ({ id, company_logo_url, job_title, company, location, dates, description, skills }) => {
+  const { t } = useTranslation();
   const locationContext = useLocation();
 
   return (
@@ -15,7 +17,7 @@ const WorkCard = ({ id, company_logo_url, job_title, company, location, dates, d
               state={{ background: locationContext }}
             >
               <LazyLoadImage
-                alt="company-logo"
+                alt={company}
                 effect="blur"
                 src={company_logo_url}
                 width="100%"
@@ -34,7 +36,7 @@ const WorkCard = ({ id, company_logo_url, job_title, company, location, dates, d
           <p className={s.description}>{description}</p>
           <br />
           <p className={s.skills}>
-            <strong>Skills:</strong> {skills.join(', ')}
+            <strong>{t('Skills:')}</strong> {skills.join(', ')}
           </p>
         </div>
       </div>

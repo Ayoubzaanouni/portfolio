@@ -9,7 +9,7 @@ import { notifyError, notifySaved } from './notify';
 const PARAGRAPH_HINT =
   'Separate paragraphs with an empty line. **text** = purple highlight, *text* = bold.';
 
-const fields = [
+const englishFields = [
   {
     name: 'intro_paragraphs',
     label: 'Home page introduction',
@@ -33,10 +33,22 @@ const fields = [
   { name: 'github_url', label: 'GitHub URL', type: 'url' },
 ];
 
+const translatedFields = ['intro_paragraphs', 'about_paragraphs', 'hobbies'];
+const fields = englishFields.flatMap((field) => translatedFields.includes(field.name)
+  ? [
+      { ...field, label: `${field.label} (English)` },
+      { ...field, name: `${field.name}_fr`, label: `${field.label} (Français)`,
+        hint: `${field.hint} Optional: empty fields use a built-in translation or English.` },
+    ]
+  : [field]);
+
 const toForm = (profile) => ({
   intro_paragraphs: profile.intro_paragraphs.join('\n\n'),
   about_paragraphs: profile.about_paragraphs.join('\n\n'),
   hobbies: profile.hobbies.join('\n'),
+  intro_paragraphs_fr: (profile.intro_paragraphs_fr ?? []).join('\n\n'),
+  about_paragraphs_fr: (profile.about_paragraphs_fr ?? []).join('\n\n'),
+  hobbies_fr: (profile.hobbies_fr ?? []).join('\n'),
   avatar_url: profile.avatar_url ?? '',
   linkedin_url: profile.linkedin_url ?? '',
   github_url: profile.github_url ?? '',
@@ -49,6 +61,9 @@ const splitParagraphs = (text) =>
     .filter(Boolean);
 
 const fromForm = (form) => ({
+  intro_paragraphs_fr: splitParagraphs(form.intro_paragraphs_fr),
+  about_paragraphs_fr: splitParagraphs(form.about_paragraphs_fr),
+  hobbies_fr: form.hobbies_fr.split('\n').map((h) => h.trim()).filter(Boolean),
   intro_paragraphs: splitParagraphs(form.intro_paragraphs),
   about_paragraphs: splitParagraphs(form.about_paragraphs),
   hobbies: form.hobbies

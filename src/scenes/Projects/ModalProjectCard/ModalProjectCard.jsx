@@ -1,3 +1,4 @@
+import { useTranslation } from '../../../i18n/useTranslation';
 import s from './ModalProjectCard.module.scss';
 import { BiLinkExternal } from '@react-icons/all-files/bi/BiLinkExternal';
 import { getProject } from '../../../api/content';
@@ -10,11 +11,13 @@ import { useModal } from '../../../hooks/modalHook';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 
 const ModalProjectCard = () => {
+  const { t, localize } = useTranslation();
   const { id } = useParams();
-  const { data: project, loading } = useAsync(
+  const { data, loading } = useAsync(
     () => getProject(id),
     [id],
   );
+  const project = localize(data, ['title', 'description']);
   const { isVisible, toggleModal } = useModal();
 
   // Open once the project is loaded so the enter transition plays.
@@ -29,7 +32,7 @@ const ModalProjectCard = () => {
       {project ? (
         <div className={s.cardWrapper}>
           <LazyLoadImage
-            alt="project-img"
+            alt={project.title}
             src={project.image_url}
             effect="blur"
             width="100%"
@@ -54,7 +57,7 @@ const ModalProjectCard = () => {
                 href={project.site_url}
                 target="_blank"
               >
-                <BiLinkExternal /> &nbsp; View project
+                <BiLinkExternal /> &nbsp; {t('View project')}
               </Button>
             )}
 
@@ -65,14 +68,14 @@ const ModalProjectCard = () => {
                 href={project.repo_url}
                 target="_blank"
               >
-                <BiLinkExternal /> &nbsp; Know more
+                <BiLinkExternal /> &nbsp; {t('Know more')}
               </Button>
             )}
           </div>
         </div>
       ) : (
         <div className={s.cardBody}>
-          <h3 className={s.title}>Project not found</h3>
+          <h3 className={s.title}>{t('Project not found')}</h3>
         </div>
       )}
     </Modal>

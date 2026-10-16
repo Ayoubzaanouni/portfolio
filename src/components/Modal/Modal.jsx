@@ -1,3 +1,4 @@
+import { useTranslation } from '../../i18n/useTranslation';
 import s from './Modal.module.scss';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -6,6 +7,7 @@ import ModalCloseIcon from '../../assets/modal-close.svg?react';
 import Backdrop from '../UIElements/Backdrop/Backdrop';
 
 const Modal = ({ children, show, onClose }) => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
 
   const closeModal = (e) => {
@@ -36,7 +38,7 @@ const Modal = ({ children, show, onClose }) => {
       >
         <div className={s.modal}>
           <div className={s.closeWrapper} onClick={closeModal}>
-            <button className={s.closeButton}>
+            <button className={s.closeButton} aria-label={t('Close')}>
               <ModalCloseIcon className={s.closeIcon} />
             </button>
           </div>

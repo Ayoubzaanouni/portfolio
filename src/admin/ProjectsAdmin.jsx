@@ -1,7 +1,7 @@
 import s from './Admin.module.scss';
 import CrudAdmin from './CrudAdmin';
 
-const fields = [
+const englishFields = [
   { name: 'title', label: 'Title', required: true },
   { name: 'description', label: 'Description', type: 'textarea' },
   { name: 'image_url', label: 'Image', type: 'image' },
@@ -14,6 +14,15 @@ const fields = [
     hint: 'Comma separated, e.g. #react, #ionic',
   },
 ];
+
+const translatedFields = ['title', 'description'];
+const fields = englishFields.flatMap((field) => translatedFields.includes(field.name)
+  ? [
+      { ...field, label: `${field.label} (English)` },
+      { ...field, name: `${field.name}_fr`, label: `${field.label} (Français)`, required: false,
+        hint: 'Optional. Leave empty to use a built-in translation or the English text.' },
+    ]
+  : [field]);
 
 const ProjectsAdmin = () => (
   <CrudAdmin

@@ -1,3 +1,4 @@
+import { useTranslation } from '../../i18n/useTranslation';
 import { AiFillGithub } from '@react-icons/all-files/ai/AiFillGithub';
 import { FaLinkedinIn } from '@react-icons/all-files/fa/FaLinkedinIn';
 import { getProfile } from '../../api/content';
@@ -5,6 +6,7 @@ import { useAsync } from '../../hooks/useAsync';
 import s from './Footer.module.scss';
 
 const Footer = () => {
+  const { t } = useTranslation();
   const { data: profile } = useAsync(getProfile);
 
   // let date = new Date();
@@ -14,7 +16,7 @@ const Footer = () => {
     <div className={s.footer}>
       <div className={s.container}>
         <div className={s.copyright}>
-          <h1>Made by Ayoub Zaanouni</h1>
+          <h1>{t('Made by Ayoub Zaanouni')}</h1>
         </div>
 
         <div className={s.body}>

@@ -1,38 +1,41 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { getProfileRow, saveProfile, uploadFile } from '../api/content';
 import Button from '../components/UIElements/Button/Button';
 import s from './Admin.module.scss';
 import { notifyError, notifySaved } from './notify';
 
-const ResumeAdmin = () => {
-  const [profile, setProfile] = useState(undefined);
+const versions = [['en', 'English'], ['fr', 'Français']];
+
+const ResumeVersion = ({ language, label, profile, onSaved }) => {
+  const currentUrl = profile?.[`resume_${language}_url`] ||
+    (language === 'en' ? profile?.resume_url : null);
+  const currentFilename = profile?.[`resume_${language}_filename`] ||
+    (language === 'en' ? profile?.resume_filename : '') || '';
   const [file, setFile] = useState(null);
-  const [filename, setFilename] = useState('');
+  const [filename, setFilename] = useState(currentFilename);
   const [busy, setBusy] = useState(false);
+  const inputRef = useRef();
 
-  useEffect(() => {
-    getProfileRow()
-      .then((row) => {
-        setProfile(row);
-        setFilename(row?.resume_filename ?? '');
-      })
-      .catch(notifyError);
-  }, []);
-
-  const submit = async (e) => {
-    e.preventDefault();
+  const submit = async (event) => {
+    event.preventDefault();
+    if (busy) return;
     setBusy(true);
     try {
-      const values = { resume_filename: filename || null };
+      const values = { [`resume_${language}_filename`]: filename.trim() || file?.name || null };
       if (file) {
-        const url = await uploadFile('documents', file, 'resume.pdf');
-        // Cache-bust so visitors get the new file right away.
-        values.resume_url = `${url}?v=${Date.now()}`;
-        if (!filename) values.resume_filename = file.name;
+        const signature = await file.slice(0, 5).text();
+        if (signature !== '%PDF-') throw new Error('Please select a valid PDF file.');
+        // Unique paths keep each language independent and avoid overwriting a live CV
+        // if saving the profile fails after uploading.
+        const path = `resume-${language}-${crypto.randomUUID()}.pdf`;
+        values[`resume_${language}_url`] = await uploadFile('documents', file, path);
       }
-      setProfile(await saveProfile(values));
+      const saved = await saveProfile(values);
+      onSaved(saved);
+      setFilename(saved[`resume_${language}_filename`] || '');
       setFile(null);
-      notifySaved('Resume updated');
+      inputRef.current.value = '';
+      notifySaved(`${label} resume updated`);
     } catch (error) {
       notifyError(error);
     } finally {
@@ -40,52 +43,68 @@ const ResumeAdmin = () => {
     }
   };
 
-  if (profile === undefined) return <p className={s.muted}>Loading…</p>;
-
   return (
     <form className={`${s.card} ${s.form}`} onSubmit={submit}>
+      <h2>{label}</h2>
       <div className={s.field}>
         <label>Current resume</label>
-        {profile?.resume_url ? (
-          <a
-            className={s.purple}
-            href={profile.resume_url}
-            target="_blank"
-            rel="noreferrer"
-          >
-            {profile.resume_filename || 'Open resume'}
+        {currentUrl ? (
+          <a className={s.purple} href={currentUrl} target="_blank" rel="noreferrer">
+            {currentFilename || 'Open resume'}
           </a>
-        ) : (
-          <span className={s.muted}>None uploaded yet</span>
-        )}
+        ) : <span className={s.muted}>None uploaded yet</span>}
       </div>
-
       <div className={s.field}>
-        <label htmlFor="resume-file">Upload a new PDF</label>
+        <label htmlFor={`resume-${language}-file`}>Upload a new PDF</label>
         <input
-          id="resume-file"
+          ref={inputRef}
+          id={`resume-${language}-file`}
           type="file"
-          accept="application/pdf"
-          onChange={(e) => setFile(e.target.files?.[0] ?? null)}
+          accept="application/pdf,.pdf"
+          disabled={busy}
+          onChange={(event) => setFile(event.target.files?.[0] ?? null)}
         />
       </div>
-
       <div className={s.field}>
-        <label htmlFor="resume-filename">Download file name</label>
+        <label htmlFor={`resume-${language}-filename`}>Download file name</label>
         <input
-          id="resume-filename"
+          id={`resume-${language}-filename`}
           value={filename}
-          placeholder="CV_Your_Name.pdf"
-          onChange={(e) => setFilename(e.target.value)}
+          disabled={busy}
+          placeholder={`CV_Your_Name_${language}.pdf`}
+          onChange={(event) => setFilename(event.target.value)}
         />
       </div>
-
       <div className={s.actions}>
         <Button type="submit" className="primary" disabled={busy}>
-          {busy ? 'Uploading…' : 'Save'}
+          {busy ? 'Uploading…' : `Save ${label}`}
         </Button>
       </div>
     </form>
+  );
+};
+
+const ResumeAdmin = () => {
+  const [profile, setProfile] = useState(undefined);
+  const [error, setError] = useState(false);
+
+  useEffect(() => {
+    getProfileRow().then(setProfile).catch((error) => {
+      setError(true);
+      notifyError(error);
+    });
+  }, []);
+
+  if (error) return <p role="alert">Unable to load resumes. Please reload to try again.</p>;
+  if (profile === undefined) return <p className={s.muted}>Loading…</p>;
+
+  return (
+    <>
+      <p className={s.muted}>Upload each language separately. Visitors can choose English or French.</p>
+      {versions.map(([language, label]) => (
+        <ResumeVersion key={language} language={language} label={label} profile={profile} onSaved={setProfile} />
+      ))}
+    </>
   );
 };
 

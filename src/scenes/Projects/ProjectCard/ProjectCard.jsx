@@ -13,7 +13,7 @@ const ProjectCard = ({ id, image_url, title, description }) => {
           state={{ background: location }}
         >
           <LazyLoadImage
-            alt="card-img"
+            alt={title}
             effect="blur"
             src={image_url}
             width="100%"

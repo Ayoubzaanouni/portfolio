@@ -41,6 +41,18 @@ create table if not exists public.profile (
   updated_at timestamptz not null default now()
 );
 
+-- Preserve the existing CV as the English version.
+-- Safe to run again; existing localized uploads are retained.
+alter table public.profile
+  add column if not exists resume_en_url text,
+  add column if not exists resume_en_filename text,
+  add column if not exists resume_fr_url text,
+  add column if not exists resume_fr_filename text;
+
+update public.profile
+set resume_en_url = coalesce(resume_en_url, resume_url),
+    resume_en_filename = coalesce(resume_en_filename, resume_filename);
+
 create table if not exists public.projects (
   id uuid primary key default gen_random_uuid(),
   title text not null,
@@ -74,6 +86,26 @@ create table if not exists public.skills (
   sort_order int not null default 0,
   created_at timestamptz not null default now()
 );
+
+-- Optional French translations. Existing columns remain the English source.
+alter table public.profile
+  add column if not exists intro_paragraphs_fr text[],
+  add column if not exists about_paragraphs_fr text[],
+  add column if not exists hobbies_fr text[];
+
+alter table public.projects
+  add column if not exists title_fr text,
+  add column if not exists description_fr text;
+
+alter table public.experiences
+  add column if not exists job_title_fr text,
+  add column if not exists location_fr text,
+  add column if not exists dates_fr text,
+  add column if not exists description_fr text,
+  add column if not exists skills_fr text[];
+
+alter table public.skills
+  add column if not exists name_fr text;
 
 -- ---------------------------------------------------------------------------
 -- Row Level Security: everyone can read, only admins can write

@@ -7,7 +7,7 @@ const categories = [
   ['tool', 'Tools I use'],
 ];
 
-const fields = [
+const englishFields = [
   { name: 'name', label: 'Name', required: true },
   {
     name: 'category',
@@ -18,6 +18,15 @@ const fields = [
   },
   { name: 'icon_key', label: 'Icon', type: 'icon' },
 ];
+
+const translatedFields = ['name'];
+const fields = englishFields.flatMap((field) => translatedFields.includes(field.name)
+  ? [
+      { ...field, label: `${field.label} (English)` },
+      { ...field, name: `${field.name}_fr`, label: `${field.label} (Français)`, required: false,
+        hint: 'Optional. Leave empty to use a built-in translation or the English text.' },
+    ]
+  : [field]);
 
 const SkillsAdmin = () => (
   <CrudAdmin

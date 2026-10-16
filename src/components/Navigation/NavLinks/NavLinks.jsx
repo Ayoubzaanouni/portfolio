@@ -1,3 +1,4 @@
+import { useTranslation } from '../../../i18n/useTranslation';
 import { AiOutlineFundProjectionScreen } from '@react-icons/all-files/ai/AiOutlineFundProjectionScreen';
 import { AiOutlineHome } from '@react-icons/all-files/ai/AiOutlineHome';
 import { AiOutlineUser } from '@react-icons/all-files/ai/AiOutlineUser';
@@ -38,6 +39,7 @@ const Link = (props) => {
 };
 
 const NavLinks = () => {
+  const { t } = useTranslation();
   return (
     <ul className={s.navBar}>
       {Object.entries(scenes).map(([name, scene], idx) => {
@@ -45,7 +47,7 @@ const NavLinks = () => {
           <li key={idx}>
             <Link
               to={r[name]}
-              name={name}
+              name={t(name)}
               icon={icons[name]}
               scene={scene}
               end={idx === 0}

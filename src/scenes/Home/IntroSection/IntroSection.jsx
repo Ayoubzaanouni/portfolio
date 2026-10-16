@@ -1,3 +1,4 @@
+import { useTranslation } from '../../../i18n/useTranslation';
 import { AiFillGithub } from '@react-icons/all-files/ai/AiFillGithub';
 import { FaLinkedinIn } from '@react-icons/all-files/fa/FaLinkedinIn';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
@@ -10,7 +11,9 @@ import { RichText } from '../../../utils/richText';
 import s from './IntroSection.module.scss';
 
 const IntroSection = () => {
-  const { data: profile } = useAsync(getProfile);
+  const { t, localize } = useTranslation();
+  const { data } = useAsync(getProfile);
+  const profile = localize(data, ['intro_paragraphs']);
 
   return (
     <section className={s.content}>
@@ -18,7 +21,7 @@ const IntroSection = () => {
         <div className={s.textAndImage}>
           <div className={s.introductionText}>
             <h1 className={s.title}>
-              Welcome to My <span className={s.purple}>Portfolio</span>
+              {t('Welcome to My')} <span className={s.purple}>{t('Portfolio')}</span>
             </h1>
             <div className={s.description}>
               {profile?.intro_paragraphs.map((text, i) => (
@@ -35,7 +38,7 @@ const IntroSection = () => {
             <Tilt>
               {profile && (
                 <LazyLoadImage
-                  alt="avatar"
+                  alt={t('Profile photo')}
                   effect="blur"
                   src={profile.avatar_url || avatar}
                 />
@@ -47,9 +50,9 @@ const IntroSection = () => {
       </div>
 
       <div className={s.introSocial}>
-        <h1>Get In Touch</h1>
+        <h1>{t('Get In Touch')}</h1>
         <p>
-          Don't hesitate to <span className={s.purple}>reach out</span> to me
+          {t('Don’t hesitate to reach out to me')}
         </p>
 
         <ul className={s.socialLinks}>

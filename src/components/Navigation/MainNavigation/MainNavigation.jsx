@@ -1,3 +1,4 @@
+import LanguageSelector from '../../LanguageSelector/LanguageSelector';
 import s from './MainNavigation.module.scss';
 import { useState } from 'react';
 import Media from 'react-media';
@@ -20,6 +21,7 @@ const MainNavigation = () => {
 
       <nav className={s.desktop}>
         <NavLinks />
+        <LanguageSelector compact />
         <BtnToggleTheme />
       </nav>
 
@@ -30,6 +32,7 @@ const MainNavigation = () => {
 
             <Logo className={s.mobile} />
 
+            <LanguageSelector compact />
             <BtnToggleTheme className={s.mobile} />
           </>
         )}
