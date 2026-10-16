@@ -1,4 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
+import { Document, Page, pdfjs } from 'react-pdf';
+import pdfWorker from 'pdfjs-dist/build/pdf.worker.min.mjs?url';
+import 'react-pdf/dist/Page/TextLayer.css';
+import 'react-pdf/dist/Page/AnnotationLayer.css';
 import DownloadIcon from '../../assets/download.svg?react';
 import Button from '../../components/UIElements/Button/Button';
 import BaseLayout from '../../layouts/BaseLayout/BaseLayout';
@@ -6,39 +10,22 @@ import { getProfile } from '../../api/content';
 import { useAsync } from '../../hooks/useAsync';
 import s from './Resume.module.scss';
 
+pdfjs.GlobalWorkerOptions.workerSrc = pdfWorker;
+
 const Resume = () => {
-  const { data: profile } = useAsync(getProfile);
+  const { data: profile, loading } = useAsync(getProfile);
   const resumeLink = profile?.resume_url;
-  const [isLoading, setIsLoading] = useState(true);
+  const [numPages, setNumPages] = useState(0);
+  const [pageWidth, setPageWidth] = useState(0);
   const pdfWrapper = useRef(null);
 
-  // Handle loading state change when the iframe content is loaded
-  const handleIframeLoad = () => {
-    setIsLoading(false);
-  };
-
-  // Dynamic height for iframe
-  const getIframeHeight = () => {
-    if (window.innerWidth < 600) {
-      return '60vh'; // Less height for small screens
-    }
-    return '80vh'; // Default height for larger screens
-  };
-
   useEffect(() => {
-    // Recalculate iframe height on window resize
-    const handleResize = () => {
-      if (pdfWrapper.current) {
-        pdfWrapper.current.style.height = getIframeHeight();
-      }
-    };
-
-    handleResize(); // Call initially
-    window.addEventListener('resize', handleResize); // Update on resize
-
-    return () => {
-      window.removeEventListener('resize', handleResize); // Clean up listener
-    };
+    const wrapper = pdfWrapper.current;
+    const observer = new ResizeObserver(([entry]) => {
+      setPageWidth(Math.min(1000, Math.floor(entry.contentRect.width)));
+    });
+    observer.observe(wrapper);
+    return () => observer.disconnect();
   }, []);
 
   return (
@@ -48,47 +35,42 @@ const Resume = () => {
           <h1 className={s.title}>My Resume</h1>
         </div>
 
-        <Button style={{ margin: 'auto', width: '15rem' }} className="primary">
-          <a
-            href={resumeLink}
-            download={profile?.resume_filename || 'resume.pdf'}
-            target="_blank"
-            rel="noreferrer"
-          >
-            <DownloadIcon fill="#fff" />
-            <span className={s.downloadText}> Download Resume</span>
-          </a>
-        </Button>
+        {resumeLink && (
+          <Button style={{ margin: 'auto', width: '15rem' }} className="primary">
+            <a
+              href={resumeLink}
+              download={profile?.resume_filename || 'resume.pdf'}
+              target="_blank"
+              rel="noreferrer"
+            >
+              <DownloadIcon fill="#fff" />
+              <span className={s.downloadText}> Download Resume</span>
+            </a>
+          </Button>
+        )}
 
-        <div
-          ref={pdfWrapper}
-          style={{
-            marginTop: '2rem',
-            display: 'flex',
-            justifyContent: 'center',
-            width: '100%',
-            overflow: 'hidden',
-            height: getIframeHeight(), // Set height dynamically
-          }}
-        >
-          {isLoading && (
-            <div className={s.loadingIndicator}>
-              <span>Loading...</span>
-            </div>
-          )}
-
-          {resumeLink && (
-          <iframe
-            src={`https://mozilla.github.io/pdf.js/web/viewer.html?file=${encodeURIComponent(resumeLink)}`}
-            width="80%"
-            height="100%"
-            title="CV"
-            style={{
-              border: 'none',
-              maxWidth: '1000px',
-            }}
-            onLoad={handleIframeLoad}
-          />
+        <div ref={pdfWrapper} className={s.pdfWrapper}>
+          {loading && <p className={s.loadingIndicator} role="status">Loading...</p>}
+          {!loading && !resumeLink && <p role="status">Resume currently unavailable.</p>}
+          {resumeLink && pageWidth > 0 && (
+            <Document
+              key={resumeLink}
+              file={resumeLink}
+              onLoadSuccess={({ numPages: count }) => setNumPages(count)}
+              loading={<p className={s.loadingIndicator} role="status">Loading...</p>}
+              error={<p role="alert">Unable to display the resume. Please use the download link above.</p>}
+            >
+              {Array.from({ length: numPages }, (_, index) => (
+                <Page
+                  key={index + 1}
+                  pageNumber={index + 1}
+                  width={pageWidth}
+                  className={s.pdfPage}
+                  loading={<p role="status">Loading page...</p>}
+                  error={<p role="alert">Unable to display this page. Please use the download link above.</p>}
+                />
+              ))}
+            </Document>
           )}
         </div>
       </div>

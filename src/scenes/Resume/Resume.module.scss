@@ -34,6 +34,9 @@
 }
 
 .pdfWrapper {
+  display: flex;
+  justify-content: center;
+  margin-top: 2rem;
   width: 100%;
   padding: 1rem 0;
   margin-bottom: 1rem; /* Add space below PDF wrapper */
@@ -97,7 +100,11 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
+  min-height: 10rem;
   font-size: 1.5rem; /* Reduced font size */
   color: var(--txt-secondary);
+}
+
+.pdfPage {
+  margin-bottom: 1.5rem;
 }
