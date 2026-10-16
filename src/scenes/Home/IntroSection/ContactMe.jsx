@@ -1,7 +1,11 @@
 import React, { useState, useRef } from 'react';
-import emailjs from 'emailjs-com';
+import emailjs from '@emailjs/browser';
 import Swal from 'sweetalert2';
 import s from './IntroSection.module.scss';
+
+const EMAILJS_SERVICE_ID = import.meta.env.VITE_EMAILJS_SERVICE_ID;
+const EMAILJS_TEMPLATE_ID = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
+const EMAILJS_PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
 
 export default function ContactMe() {
   const [loading, setLoading] = useState(false);
@@ -14,7 +18,7 @@ export default function ContactMe() {
     confirmButtonText: 'Okay',
   });
 
-  function sendEmail(e) {
+  async function sendEmail(e) {
     e.preventDefault();
 
     if (loading) return;
@@ -42,24 +46,25 @@ export default function ContactMe() {
 
     setLoading(true);
 
-    emailjs
-      .sendForm('service_vk9p1el', 'template_7sorgcu', form, 'gHU1oDul3m56qE1QK')
-      .then(
-        () => {
-          setLoading(false);
-          formRef.current.reset();
-          showSuccess();
-        },
-        () => {
-          setLoading(false);
-          Swal.fire({
-            icon: 'error',
-            title: 'Failed to send email',
-            text: 'There was an error while sending the email.',
-            confirmButtonText: 'Try again',
-          });
-        }
+    try {
+      await emailjs.sendForm(
+        EMAILJS_SERVICE_ID,
+        EMAILJS_TEMPLATE_ID,
+        form,
+        { publicKey: EMAILJS_PUBLIC_KEY },
       );
+      form.reset();
+      showSuccess();
+    } catch {
+      Swal.fire({
+        icon: 'error',
+        title: 'Failed to send email',
+        text: 'There was an error while sending the email.',
+        confirmButtonText: 'Try again',
+      });
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -77,7 +82,9 @@ export default function ContactMe() {
       <label htmlFor="message">Message</label>
       <textarea id="message" name="message" placeholder="Type your message" required />
 
-      <button type="submit" disabled={loading} className='Send'>Send</button>
+      <button type="submit" disabled={loading} className="Send">
+        {loading ? 'Sending…' : 'Send'}
+      </button>
     </form>
   );
 }
