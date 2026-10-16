@@ -42,6 +42,12 @@ The application will open in your default browser at `http://localhost:3000`.
 
 ## Editing content
 
+The contact form uses a hidden honeypot field for basic spam deterrence, with no
+CAPTCHA keys or Google reCAPTCHA scripts. EmailJS configuration is still required.
+In the EmailJS template settings, ensure reCAPTCHA verification is disabled;
+otherwise EmailJS will reject submissions from this form. The browser-only
+honeypot can be bypassed and is not server-side bot protection.
+
 All content (projects, experiences, about/intro text, skills & tools, resume PDF) lives in Supabase
 and is edited at **`/admin`** (e.g. `https://ayoubzaanouni.com/admin`). Changes are live immediately, no redeploy needed.
 
